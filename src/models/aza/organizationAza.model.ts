@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { AzaType } from "../types/enums/aza.ts";
+import { AzaType } from "../../types/enums/aza.ts";
 
-const userAzaSchema = new Schema(
+const organizationAzaSchema = new Schema(
   {
     account_number: {
       type: String,
@@ -24,14 +24,23 @@ const userAzaSchema = new Schema(
       required: [true, "The Account Type is not specified."],
     },
 
-    owner: {
+    userOwner: {
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: [true, "Someone needs to own this account"],
+    },
+
+    organizationOwner: {
+      type: mongoose.Types.ObjectId,
+      ref: "Organization",
+      required: [true, "An organization needs to own this account"],
     },
   },
   { timestamps: true }
 );
 
-const UserAzaModel = mongoose.model("UserAza", userAzaSchema);
-export default UserAzaModel;
+const OrganizationAzaModel = mongoose.model(
+  "OrganizationAza",
+  organizationAzaSchema
+);
+export default OrganizationAzaModel;
