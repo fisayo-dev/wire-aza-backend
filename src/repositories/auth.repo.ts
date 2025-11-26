@@ -5,6 +5,8 @@ class AuthRepo {
     const user = await User.findOne({ email });
     return user;
   };
+
+  storeUserInDB = async (value) => {};
 }
 
 export default AuthRepo;

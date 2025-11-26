@@ -4,9 +4,7 @@ import { OauthType } from "../types/enums/auth.ts";
 class AuthService {
   constructor(private authRepo: AuthRepo) {}
 
-  signupByEmail = async () => {
-    
-  };
+  signupByEmail = async (authCredentials) => {};
 
   loginByEmail = async () => {};
 
