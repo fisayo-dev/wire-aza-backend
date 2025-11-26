@@ -1,4 +1,4 @@
-import { LoggerType } from "../types/enums/index.ts";
+import { LoggerType } from "../types/enums/logger.ts";
 
 export const logger = (msg: string, type: LoggerType = LoggerType.log) => {
   switch (type) {

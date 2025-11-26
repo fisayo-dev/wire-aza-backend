@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MONGO_DB_URI } from "./env.ts";
-import { LoggerType } from "../types/enums/index.ts";
+import { LoggerType } from "../types/enums/logger.ts";
 import { logger } from "../utils/logger.ts";
 
 const connectDB = async () => {
