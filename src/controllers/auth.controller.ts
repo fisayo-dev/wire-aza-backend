@@ -12,7 +12,7 @@ class AuthController {
       const user = await this.authRepo.getUser(user_details?.email);
       if (user) return sendNotFound(res, "User with this email already exists");
 
-      // Log User In
+      // Create account for user
     } catch (error) {
       next(error);
     }
