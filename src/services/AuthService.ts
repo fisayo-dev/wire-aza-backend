@@ -1,11 +1,11 @@
 import AuthRepo from "../repositories/auth.repo.ts";
 import { OauthType } from "../types/enums/auth.ts";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { EmailSignupPayload, OAuthSignupPayload } from "../validations/auth.validation.ts";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
-const JWT_EXPIRY = process.env.JWT_EXPIRY || "7d";
+import {
+  EmailSignupPayload,
+  OAuthSignupPayload,
+} from "../validations/auth.validation.ts";
+import { comparePassword, hashPassword, signToken } from "../utils/auth.ts";
 
 class AuthService {
   constructor(private authRepo: AuthRepo) {}
@@ -13,7 +13,7 @@ class AuthService {
   signupByEmail = async (authCredentials: EmailSignupPayload) => {
     try {
       // Hash password
-      const hashedPassword = await bcrypt.hash(authCredentials.password, 10);
+      const hashedPassword = await hashPassword(authCredentials.password);
 
       const userData = {
         name: authCredentials.name,
@@ -26,9 +26,7 @@ class AuthService {
       const user = await this.authRepo.storeUserInDB(userData);
 
       // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRY,
-      });
+      const token = signToken(user._id.toString());
 
       return {
         user: {
@@ -53,16 +51,14 @@ class AuthService {
         throw new Error("Invalid email or password");
       }
 
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = await comparePassword(password, user.password);
 
       if (!isPasswordValid) {
         throw new Error("Invalid email or password");
       }
 
       // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRY,
-      });
+      const token = signToken(user._id.toString());
 
       return {
         user: {
@@ -79,11 +75,7 @@ class AuthService {
     }
   };
 
-  loginByOAuth = async (
-    email: string,
-    oauthId: string,
-    provider: OauthType
-  ) => {
+  loginByOAuth = async (oauthId: string, provider: OauthType) => {
     try {
       let user = await this.authRepo.findUserByOAuthId(
         oauthId,
@@ -95,9 +87,7 @@ class AuthService {
       }
 
       // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRY,
-      });
+      const token = signToken(user._id.toString());
 
       return {
         user: {
@@ -145,9 +135,7 @@ class AuthService {
       const user = await this.authRepo.storeUserInDB(userData);
 
       // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRY,
-      });
+      const token = signToken(user._id.toString());
 
       return {
         user: {

@@ -44,7 +44,10 @@ class AuthController {
       const result = await this.service.signupByOAuth(payload);
       return sendSuccess(res, "OAuth signup successful", result, 201);
     } catch (error: any) {
-      if (error.message.includes("already exists") || error.message.includes("already registered")) {
+      if (
+        error.message.includes("already exists") ||
+        error.message.includes("already registered")
+      ) {
         return sendError(res, error.message, 409);
       }
       next(error);
@@ -55,7 +58,7 @@ class AuthController {
     try {
       const { email, oauthId, provider } = req.body;
 
-      const result = await this.service.loginByOAuth(email, oauthId, provider);
+      const result = await this.service.loginByOAuth(oauthId, provider);
       return sendSuccess(res, "OAuth login successful", result, 200);
     } catch (error: any) {
       if (error.message === "OAuth account not found") {
