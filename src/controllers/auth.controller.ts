@@ -1,4 +1,4 @@
-import { NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import AuthService from "../services/AuthService.ts";
 import AuthRepo from "../repositories/auth.repo.ts";
 import { sendNotFound } from "../utils/response.ts";
@@ -9,8 +9,8 @@ class AuthController {
     const user_details = req.body;
     try {
       // Check if email exist
-      const user = this.authRepo.getUser(user_details?.email);
-      if (user) sendNotFound(res, "User with this email already exists");
+      const user = await this.authRepo.getUser(user_details?.email);
+      if (user) return sendNotFound(res, "User with this email already exists");
 
       // Log User In
     } catch (error) {
