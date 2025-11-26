@@ -1,8 +1,9 @@
 import User from "../models/personas/user.model.ts";
 
 class AuthRepo {
-  checkIfEmailExist = async (email: string) => {
+  getUser = async (email: string) => {
     const user = await User.findOne({ email });
+    return user;
   };
 }
 
