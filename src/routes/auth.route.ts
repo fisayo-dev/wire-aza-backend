@@ -1,7 +1,7 @@
 import { Router } from "express";
 import AuthController from "../controllers/auth.controller.ts";
-import AuthRepo from "../repositories/auth.repo.ts";
 import AuthService from "../services/AuthService.ts";
+import AuthRepo from "../repositories/auth.repo.ts";
 import { validateRequest } from "../middlewares/validation.middleware.ts";
 import {
   emailSignupSchema,
@@ -11,10 +11,12 @@ import {
 
 const router = Router();
 
+// Dependency setup (can be moved to a container later)
 const authRepo = new AuthRepo();
 const authService = new AuthService(authRepo);
-const authController = new AuthController(authService, authRepo);
+const authController = new AuthController(authService); // Only service needed!
 
+// Email auth
 router.post(
   "/auth/signup",
   validateRequest(emailSignupSchema),
@@ -31,8 +33,7 @@ router.post(
   authController.loginByOAuth
 );
 
-router.get("/auth/oauth/:provider", authController.startOAuth);
-router.get("/auth/oauth/:provider/url", authController.getOAuthUrl);
+router.get("/auth/oauth/:provider", authController.getOAuthUrl);
 router.get("/auth/oauth/:provider/callback", authController.oauthCallback);
 
 export default router;

@@ -14,3 +14,6 @@ export const {
   OAUTH_CALLBACK_URL_BASE,
   FRONTEND_URL,
 } = process.env;
+
+const env = process.env;
+export default env;
