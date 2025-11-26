@@ -56,7 +56,7 @@ class AuthController {
 
   loginByOAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, oauthId, provider } = req.body;
+      const { oauthId, provider } = req.body;
 
       const result = await this.service.loginByOAuth(oauthId, provider);
       return sendSuccess(res, "OAuth login successful", result, 200);
