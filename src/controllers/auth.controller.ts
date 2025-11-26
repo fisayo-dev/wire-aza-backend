@@ -37,23 +37,6 @@ class AuthController {
     }
   };
 
-  signupByOAuth = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const payload = req.body;
-
-      const result = await this.service.signupByOAuth(payload);
-      return sendSuccess(res, "OAuth signup successful", result, 201);
-    } catch (error: any) {
-      if (
-        error.message.includes("already exists") ||
-        error.message.includes("already registered")
-      ) {
-        return sendError(res, error.message, 409);
-      }
-      next(error);
-    }
-  };
-
   loginByOAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { oauthId, provider } = req.body;

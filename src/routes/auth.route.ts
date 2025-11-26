@@ -6,7 +6,6 @@ import { validateRequest } from "../middlewares/validation.middleware.ts";
 import {
   emailSignupSchema,
   emailLoginSchema,
-  oauthSignupSchema,
   oauthLoginSchema,
 } from "../validations/auth.validation.ts";
 
@@ -25,11 +24,6 @@ router.post(
   "/auth/login",
   validateRequest(emailLoginSchema),
   authController.loginByEmail
-);
-router.post(
-  "/auth/signup/oauth",
-  validateRequest(oauthSignupSchema),
-  authController.signupByOAuth
 );
 router.post(
   "/auth/login/oauth",

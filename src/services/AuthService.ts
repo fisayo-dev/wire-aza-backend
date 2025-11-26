@@ -104,53 +104,6 @@ class AuthService {
     }
   };
 
-  signupByOAuth = async (payload: OAuthSignupPayload) => {
-    try {
-      const existingUser = await this.authRepo.findUserByOAuthId(
-        payload.oauthId,
-        payload.provider
-      );
-
-      if (existingUser) {
-        throw new Error("OAuth account already exists");
-      }
-
-      // Check if email exists
-      const emailExists = await this.authRepo.getUser(payload.email);
-      if (emailExists) {
-        throw new Error("Email already registered");
-      }
-
-      const userData = {
-        name: payload.name,
-        email: payload.email,
-        avatar: payload.avatar,
-        [`oauth.${payload.provider}`]: {
-          id: payload.oauthId,
-          provider: payload.provider,
-        },
-        password: "oauth-user", // OAuth users don't have passwords
-      };
-
-      const user = await this.authRepo.storeUserInDB(userData);
-
-      // Generate JWT token
-      const token = signToken(user._id.toString());
-
-      return {
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          username: user.username,
-          avatar: user.avatar,
-        },
-        token,
-      };
-    } catch (error) {
-      throw error;
-    }
-  };
 }
 
 export default AuthService;
