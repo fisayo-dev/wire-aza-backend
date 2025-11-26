@@ -5,13 +5,13 @@ import AuthService from "../services/AuthService.ts";
 
 const router = Router();
 
-const authRepo = new AuthRepo();
-const authServie = new AuthService(authRepo);
-const authController = new AuthController(authServie, authRepo);
+const repo = new AuthRepo();
+const service = new AuthService(repo);
+const controller = new AuthController(service, repo);
 
-router.post("/auth/signup", authController.signupByEmail);
-router.post("/auth/login", authController.loginByEmail);
-router.post("/auth/signup/oauth", authController.signupByOAuth);
-router.post("/auth/login/oauth", authController.loginByOAuth);
+router.post("/auth/signup", controller.signupByEmail);
+router.post("/auth/login", controller.loginByEmail);
+router.post("/auth/signup/oauth", controller.signupByOAuth);
+router.post("/auth/login/oauth", controller.loginByOAuth);
 
 export default router;
