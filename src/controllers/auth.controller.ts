@@ -50,6 +50,60 @@ class AuthController {
       next(error);
     }
   };
+
+  startOAuth = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const provider = req.params.provider;
+      const url = this.service.getOAuthRedirectUrl(
+        provider as "google" | "github"
+      );
+      return res.redirect(url);
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  getOAuthUrl = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const provider = req.params.provider;
+      const url = this.service.getOAuthRedirectUrl(
+        provider as "google" | "github"
+      );
+      return sendSuccess(res, "OAuth URL generated", { authUrl: url }, 200);
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  oauthCallback = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const provider = req.params.provider;
+      const code = req.query.code as string;
+
+      if (!code) {
+        return sendError(res, "Authorization code is missing", 400);
+      }
+
+      const result = await this.service.handleOAuthCallback(
+        provider as "google" | "github",
+        code
+      );
+
+      // If FRONTEND_URL is set, redirect to frontend with token
+      const { FRONTEND_URL } = require("../configs/env.ts");
+      if (FRONTEND_URL) {
+        const redirectUrl = new URL(`${FRONTEND_URL}/auth/callback`);
+        redirectUrl.searchParams.set("token", result.token);
+        redirectUrl.searchParams.set("userId", result.user.id.toString());
+        redirectUrl.searchParams.set("email", result.user.email);
+        return res.redirect(redirectUrl.toString());
+      }
+
+      return sendSuccess(res, "OAuth login successful", result, 200);
+    } catch (error: any) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

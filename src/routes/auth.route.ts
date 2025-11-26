@@ -31,4 +31,8 @@ router.post(
   authController.loginByOAuth
 );
 
+router.get("/auth/oauth/:provider", authController.startOAuth);
+router.get("/auth/oauth/:provider/url", authController.getOAuthUrl);
+router.get("/auth/oauth/:provider/callback", authController.oauthCallback);
+
 export default router;

@@ -17,7 +17,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: false,
       minLength: 6,
     },
     username: {
@@ -30,6 +30,10 @@ const userSchema = new Schema(
       type: String,
       required: false,
       trim: true,
+    },
+    oauth: {
+      type: Object,
+      required: false,
     },
   },
   { timestamps: true }

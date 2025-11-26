@@ -1,4 +1,4 @@
 export enum OauthType {
   Google = "google",
-  Apple = "apple",
+  Github = "github",
 }

@@ -25,7 +25,7 @@ export const oauthSignupSchema = z.object({
   email: z.string().email("Please fill a valid email address"),
   avatar: z.string().optional(),
   oauthId: z.string().min(1, "OAuth ID is required"),
-  provider: z.enum(["google", "apple"]),
+  provider: z.enum(["google", "github"]),
 });
 
 export type OAuthSignupPayload = z.infer<typeof oauthSignupSchema>;
@@ -34,7 +34,7 @@ export type OAuthSignupPayload = z.infer<typeof oauthSignupSchema>;
 export const oauthLoginSchema = z.object({
   email: z.string().email("Please fill a valid email address"),
   oauthId: z.string().min(1, "OAuth ID is required"),
-  provider: z.enum(["google", "apple"]),
+  provider: z.enum(["google", "github"]),
 });
 
 export type OAuthLoginPayload = z.infer<typeof oauthLoginSchema>;
