@@ -18,7 +18,7 @@ class AuthController {
       const result = await this.service.signupByEmail(user_details);
 
       // Now uses centralized cookie + response logic
-      return sendSuccessWithCookie(
+      sendSuccessWithCookie(
         res,
         "User registered successfully",
         result,
@@ -36,12 +36,7 @@ class AuthController {
       const { email, password } = req.body;
       const result = await this.service.loginByEmail(email, password);
 
-      return sendSuccessWithCookie(
-        res,
-        "Login successful",
-        result,
-        result.token
-      );
+      sendSuccessWithCookie(res, "Login successful", result, result.token);
     } catch (error: any) {
       next(error);
     }
@@ -52,7 +47,7 @@ class AuthController {
       const { oauthId, provider } = req.body;
       const result = await this.service.loginByOAuth(oauthId, provider);
 
-      return sendSuccessWithCookie(
+      sendSuccessWithCookie(
         res,
         "OAuth login successful",
         result,
@@ -97,13 +92,12 @@ class AuthController {
 
       // Still set cookie here because we're redirecting (not sending JSON)
       const isProduction = process.env.NODE_ENV === "production";
-      res.cookie("wire-aza-session", result.token, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: "/",
-      });
+      sendSuccessWithCookie(
+        res,
+        "OAuth login successful",
+        result,
+        result.token
+      );
 
       return res.redirect(`${env.FRONTEND_URL}/dashboard`);
     } catch (error: any) {

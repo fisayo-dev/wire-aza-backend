@@ -11,6 +11,11 @@ const corsOptions = {
   credentials: true,
 };
 
+// Allow cookies in development (trust proxy for production)
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1); // Trust first proxy in production
+}
+
 // Use cors middleware
 app.use(cors(corsOptions));
 app.use(express.json());

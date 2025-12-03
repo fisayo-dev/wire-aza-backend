@@ -30,7 +30,7 @@ export const sendSuccessWithCookie = <T>(
   data: T,
   token: string,
   statusCode: number = 200
-): Response => {
+): void => {
   const response: ApiResponse<T> = {
     success: true,
     message,
@@ -39,15 +39,25 @@ export const sendSuccessWithCookie = <T>(
 
   const isProduction = process.env.NODE_ENV === "production";
 
-  res.cookie("wire-aza-session", token, {
+  // Development: use sameSite: "lax" with secure: false
+  // Production: use sameSite: "none" with secure: true for cross-origin
+  const cookieOptions = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "lax",
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: "/", // important: make cookie available on all routes
+    path: "/",
+  };
+
+  console.log("🍪 Setting cookie:", {
+    name: "wire-aza-session",
+    token: token.substring(0, 20) + "...",
+    ...cookieOptions,
   });
 
-  return res.status(statusCode).json(response);
+  res.cookie("wire-aza-session", token, cookieOptions);
+
+  res.status(statusCode).json(response);
 };
 
 // Keep your existing error helpers unchanged...
