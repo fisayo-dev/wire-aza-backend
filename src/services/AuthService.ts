@@ -31,6 +31,11 @@ class AuthService {
         avatar: authCredentials.avatar,
       };
 
+      const duplicateUser = await this.authRepo.getUser(authCredentials.email);
+      if (duplicateUser) {
+        throw new Error("User with this email already exists");
+      }
+
       const user = await this.authRepo.storeUserInDB(userData);
 
       // Generate JWT token
