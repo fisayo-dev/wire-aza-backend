@@ -1,5 +1,4 @@
 import express from "express";
-import errorMiddleware from "../middlewares/error.middleware.ts";
 import cors from "cors";
 import { FRONTEND_URL } from "./env.ts";
 
@@ -17,5 +16,4 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Use middlewares
-app.use(errorMiddleware);
+// Use middlewares (error handler is registered after routes in server.ts)

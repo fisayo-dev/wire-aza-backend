@@ -4,6 +4,7 @@ import { app } from "./configs/express.ts";
 import { logger } from "./utils/logger.ts";
 import { sendSuccess } from "./utils/response.ts";
 import authRoute from "./routes/auth.route.ts";
+import errorMiddleware from "./middlewares/error.middleware.ts";
 
 // Base route
 app.get("/api/v1/", (_, res) => {
@@ -17,6 +18,9 @@ app.get("/api/v1/health", (_, res) => {
 
 // Register auth routes
 app.use("/api/v1", authRoute);
+
+// Register centralized error handler after all routes
+app.use(errorMiddleware);
 
 app.listen(PORT, async () => {
   logger(`Server running on http://localhost:${PORT}`);

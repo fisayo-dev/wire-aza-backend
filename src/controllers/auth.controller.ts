@@ -2,7 +2,11 @@
 
 import { NextFunction, Request, Response } from "express";
 import AuthService from "../services/AuthService.ts";
-import { sendError, sendSuccess, sendSuccessWithCookie } from "../utils/response.ts";
+import {
+  sendError,
+  sendSuccess,
+  sendSuccessWithCookie,
+} from "../utils/response.ts";
 import env from "../configs/env.ts";
 
 class AuthController {
@@ -22,9 +26,7 @@ class AuthController {
         201
       );
     } catch (error: any) {
-      if (error.message.includes("already exists")) {
-        return sendError(res, "User with this email already exists", 409);
-      }
+      // Forward the error to centralized error middleware
       next(error);
     }
   };
