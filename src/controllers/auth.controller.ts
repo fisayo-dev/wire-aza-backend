@@ -43,9 +43,6 @@ class AuthController {
         result.token
       );
     } catch (error: any) {
-      if (error.message === "Invalid email or password") {
-        return sendError(res, "Invalid email or password", 401);
-      }
       next(error);
     }
   };
@@ -62,9 +59,6 @@ class AuthController {
         result.token
       );
     } catch (error: any) {
-      if (error.message === "OAuth account not found") {
-        return sendError(res, "Account not found", 404);
-      }
       next(error);
     }
   };

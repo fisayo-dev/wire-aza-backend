@@ -47,6 +47,9 @@ const errorMiddleware = (
     if (err.message.includes("already exists")) {
       return sendError(res, err.message, 409);
     }
+    if (err.message.includes("does not exist")) {
+      return sendError(res, err.message, 404);
+    }
   }
 
   // Fallback: server error

@@ -61,7 +61,7 @@ class AuthService {
       const user = await this.authRepo.getUser(email);
 
       if (!user) {
-        throw new Error("Invalid email or password");
+        throw new Error("User does not exist");
       }
 
       const isPasswordValid = await comparePassword(password, user.password!);
