@@ -22,8 +22,9 @@ const userSchema = new Schema(
     },
     username: {
       type: String,
-      required: false,
-      unique: true,
+      required: [false, "Username is the same"],
+      sparse: true,
+      trim: true,
       lowercase: true,
     },
     avatar: {

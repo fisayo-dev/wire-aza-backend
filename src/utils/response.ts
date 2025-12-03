@@ -1,5 +1,8 @@
+// utils/response.ts
+
 import { Response } from "express";
 import { ApiResponse } from "../types/interfaces/index.ts";
+import env from "../configs/env.ts";
 
 /**
  * Send a successful response
@@ -19,8 +22,35 @@ export const sendSuccess = <T>(
 };
 
 /**
- * Send an error response
+ * NEW: Send success + set httpOnly session cookie
  */
+export const sendSuccessWithCookie = <T>(
+  res: Response,
+  message: string,
+  data: T,
+  token: string,
+  statusCode: number = 200
+): Response => {
+  const response: ApiResponse<T> = {
+    success: true,
+    message,
+    data,
+  };
+
+  const isProduction = process.env.NODE_ENV === "production";
+
+  res.cookie("wire-aza-session", token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: "/", // important: make cookie available on all routes
+  });
+
+  return res.status(statusCode).json(response);
+};
+
+// Keep your existing error helpers unchanged...
 export const sendError = (
   res: Response,
   message: string,
@@ -35,43 +65,23 @@ export const sendError = (
   return res.status(statusCode).json(response);
 };
 
-/**
- * Send a server error response (500)
- */
 export const sendServerError = (
   res: Response,
   message: string = "Internal server error",
   error?: string
-): Response => {
-  return sendError(res, message, 500, error);
-};
+): Response => sendError(res, message, 500, error);
 
-/**
- * Send a not found response (404)
- */
 export const sendNotFound = (
   res: Response,
   message: string = "Resource not found"
-): Response => {
-  return sendError(res, message, 404);
-};
+): Response => sendError(res, message, 404);
 
-/**
- * Send an unauthorized response (401)
- */
 export const sendUnauthorized = (
   res: Response,
   message: string = "Unauthorized"
-): Response => {
-  return sendError(res, message, 401);
-};
+): Response => sendError(res, message, 401);
 
-/**
- * Send a forbidden response (403)
- */
 export const sendForbidden = (
   res: Response,
   message: string = "Forbidden"
-): Response => {
-  return sendError(res, message, 403);
-};
+): Response => sendError(res, message, 403);

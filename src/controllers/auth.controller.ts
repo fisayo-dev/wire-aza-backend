@@ -1,7 +1,9 @@
+// controllers/AuthController.ts
+
 import { NextFunction, Request, Response } from "express";
 import AuthService from "../services/AuthService.ts";
-import { sendError, sendSuccess } from "../utils/response.ts";
-import env from "../configs/env.ts"; // Load once at startup!
+import { sendError, sendSuccess, sendSuccessWithCookie } from "../utils/response.ts";
+import env from "../configs/env.ts";
 
 class AuthController {
   constructor(private service: AuthService) {}
@@ -10,7 +12,15 @@ class AuthController {
     try {
       const user_details = req.body;
       const result = await this.service.signupByEmail(user_details);
-      return sendSuccess(res, "User registered successfully", result, 201);
+
+      // Now uses centralized cookie + response logic
+      return sendSuccessWithCookie(
+        res,
+        "User registered successfully",
+        result,
+        result.token,
+        201
+      );
     } catch (error: any) {
       if (error.message.includes("already exists")) {
         return sendError(res, "User with this email already exists", 409);
@@ -23,7 +33,13 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const result = await this.service.loginByEmail(email, password);
-      return sendSuccess(res, "Login successful", result);
+
+      return sendSuccessWithCookie(
+        res,
+        "Login successful",
+        result,
+        result.token
+      );
     } catch (error: any) {
       if (error.message === "Invalid email or password") {
         return sendError(res, "Invalid email or password", 401);
@@ -36,12 +52,17 @@ class AuthController {
     try {
       const { oauthId, provider } = req.body;
       const result = await this.service.loginByOAuth(oauthId, provider);
-      return sendSuccess(res, "OAuth login successful", result);
+
+      return sendSuccessWithCookie(
+        res,
+        "OAuth login successful",
+        result,
+        result.token
+      );
     } catch (error: any) {
       if (error.message === "OAuth account not found") {
         return sendError(res, "Account not found", 404);
       }
-
       next(error);
     }
   };
@@ -50,7 +71,7 @@ class AuthController {
     try {
       const { provider } = req.params;
 
-      if (!["google", "github"].includes(provider as "google" | "github")) {
+      if (!["google", "github"].includes(provider as string)) {
         return sendError(res, "Unsupported OAuth provider", 400);
       }
 
@@ -78,11 +99,14 @@ class AuthController {
         code
       );
 
-      res.cookie("token", result.token, {
+      // Still set cookie here because we're redirecting (not sending JSON)
+      const isProduction = process.env.NODE_ENV === "production";
+      res.cookie("wire-aza-session", result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: isProduction,
         sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/",
       });
 
       return res.redirect(`${env.FRONTEND_URL}/dashboard`);
