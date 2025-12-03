@@ -1,29 +1,19 @@
 import connectDB from "./configs/db.ts";
-import { FRONTEND_URL, PORT } from "./configs/env.ts";
+import { PORT } from "./configs/env.ts";
 import { app } from "./configs/express.ts";
 import { logger } from "./utils/logger.ts";
 import { sendSuccess } from "./utils/response.ts";
 import authRoute from "./routes/auth.route.ts";
-import cors from "cors";
-import express from "express";
 
+// Base route
 app.get("/api/v1/", (_, res) => {
   sendSuccess(res, "Wire aza api working");
 });
 
+// Health route
 app.get("/api/v1/health", (_, res) => {
   sendSuccess(res, "Health status of api is ok ✅");
 });
-
-const corsOptions = {
-  origin: FRONTEND_URL!,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Register auth routes
 app.use("/api/v1", authRoute);
