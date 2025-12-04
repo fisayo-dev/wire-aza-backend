@@ -11,6 +11,8 @@ const corsOptions = {
   credentials: true,
 };
 
+console.log("🔐 CORS configured with origin:", FRONTEND_URL);
+
 // Allow cookies in development (trust proxy for production)
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1); // Trust first proxy in production

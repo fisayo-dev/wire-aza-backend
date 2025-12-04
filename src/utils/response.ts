@@ -2,7 +2,8 @@
 
 import { Response } from "express";
 import { ApiResponse } from "../types/interfaces/index.ts";
-import env from "../configs/env.ts";
+import { FRONTEND_URL } from "../configs/env.ts";
+import { is } from "zod/locales";
 
 /**
  * Send a successful response
@@ -42,9 +43,10 @@ export const sendSuccessWithCookie = <T>(
   // Development: use sameSite: "lax" with secure: false
   // Production: use sameSite: "none" with secure: true for cross-origin
   const cookieOptions = {
-    httpOnly: true,
+    // domain: "localhost:8000",
+    // httpOnly: isProduction,
     secure: isProduction,
-    sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: "/",
   };
