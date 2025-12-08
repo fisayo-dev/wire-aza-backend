@@ -44,9 +44,9 @@ export const sendSuccessWithCookie = <T>(
   // Production: use sameSite: "none" with secure: true for cross-origin
   const cookieOptions = {
     // domain: "localhost:8000",
-    // httpOnly: isProduction,
+    httpOnly: isProduction,
     secure: isProduction,
-    sameSite: "none",
+    sameSite: "none" as "none",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: "/",
   };
