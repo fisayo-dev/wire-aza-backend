@@ -7,8 +7,11 @@ export const hashPassword = async (password: string) => {
 };
 
 export const signToken = (seed: string) => {
-  const token = jwt.sign({ userId: seed }, JWT_SECRET_KEY!, {
-    expiresIn: JWT_EXPIRY!,
+  if (!JWT_SECRET_KEY || !JWT_EXPIRY) {
+    throw new Error("JWT_SECRET_KEY or JWT_EXPIRY is not configured");
+  }
+  const token = (jwt.sign as any)({ userId: seed }, JWT_SECRET_KEY, {
+    expiresIn: JWT_EXPIRY,
   });
   return token;
 };

@@ -20,17 +20,20 @@ class AuthService {
 
   signupByEmail = async (authCredentials: EmailSignupPayload) => {
     try {
+      // Normalize email
+      const email = authCredentials.email.trim().toLowerCase();
+
       // Hash password
       const hashedPassword = await hashPassword(authCredentials.password);
 
       const userData = {
         name: authCredentials.name,
-        email: authCredentials.email,
+        email,
         password: hashedPassword,
         avatar: authCredentials.avatar,
       };
 
-      const duplicateUser = await this.authRepo.getUser(authCredentials.email);
+      const duplicateUser = await this.authRepo.getUser(email);
       if (duplicateUser) {
         throw new Error("User with this email already exists");
       }
@@ -56,7 +59,8 @@ class AuthService {
 
   loginByEmail = async (email: string, password: string) => {
     try {
-      const user = await this.authRepo.getUser(email);
+      const normalizedEmail = email.trim().toLowerCase();
+      const user = await this.authRepo.getUser(normalizedEmail);
 
       if (!user) {
         throw new Error("User does not exist");
@@ -223,24 +227,27 @@ class AuthService {
         );
       }
 
+      // Normalize email
+      const normalizedEmail = email.trim().toLowerCase();
+
       // Try find user by oauth id
       let user = await this.authRepo.findUserByOAuthId(oauthId, provider);
 
       if (!user) {
         // Try finding by email
-        const existing = await this.authRepo.getUser(email);
+        const existing = await this.authRepo.getUser(normalizedEmail);
         if (existing) {
           // Attach oauth info to existing account
           const set: any = {};
           set[`oauth.${provider}`] = { id: oauthId, accessToken };
-          await this.authRepo.updateUser(email, set);
-          user = await this.authRepo.getUser(email);
+          await this.authRepo.updateUser(normalizedEmail, set);
+          user = await this.authRepo.getUser(normalizedEmail);
         } else {
           // Create new user
-          const username = email.split("@")[0];
+          const username = normalizedEmail.split("@")[0];
           const userData: any = {
             name,
-            email,
+            email: normalizedEmail,
             username,
             avatar,
             oauth: {

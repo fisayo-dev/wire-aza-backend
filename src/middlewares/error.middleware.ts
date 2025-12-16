@@ -8,7 +8,7 @@ const errorMiddleware = (
   res: Response,
   _next: NextFunction
 ) => {
-  // Mongoose validation errors
+  // Mongoose validation errors (e.g., required fields, format)
   if (err && err.name === "ValidationError") {
     const messages = Object.values(err.errors || {})
       .map((e: any) => e.message)
@@ -16,16 +16,33 @@ const errorMiddleware = (
     return sendError(res, messages || "Validation error", 400, messages);
   }
 
-  // Duplicate key error (MongoDB)
-  if (err && (err.code === 11000 || err.code === 11001)) {
-    const keyValue = err.keyValue || {};
-    const key = Object.keys(keyValue)[0];
-    const value = key ? keyValue[key] : undefined;
-    const message = key ? `Duplicate ${key}: ${value}` : "Duplicate key error";
-    return sendError(res, message, 409, JSON.stringify(keyValue));
+  // MongoDB/Mongoose duplicate key error (E11000 - most common for unique: true fields like email)
+  if (
+    err &&
+    (err.code === 11000 ||
+      err.code === 11001 ||
+      err.message?.includes("E11000"))
+  ) {
+    // Extract the field and value if possible for a better message
+    let message = "Duplicate key error";
+    if (err.message) {
+      const match = err.message.match(
+        /index:\s*\w+_\d+\s*dup key:\s*{\s*(\w+):\s*"([^"]+)"\s*}/
+      );
+      if (match) {
+        const field = match[1];
+        const value = match[2];
+        message = `${
+          field.charAt(0).toUpperCase() + field.slice(1)
+        } '${value}' already exists`;
+      } else if (err.message.includes("email")) {
+        message = "Email already exists";
+      }
+    }
+    return sendError(res, message, 409); // 409 Conflict is more semantic for duplicates
   }
 
-  // If a typed HttpError was thrown
+  // Custom HttpError
   if (err instanceof HttpError) {
     const details = err.details ? JSON.stringify(err.details) : undefined;
     return sendError(
@@ -36,7 +53,7 @@ const errorMiddleware = (
     );
   }
 
-  // Common auth-specific messages
+  // Common string-based error messages
   if (err && typeof err.message === "string") {
     if (err.message.includes("OAuth account not found")) {
       return sendError(res, "Account not found", 404);
@@ -52,7 +69,7 @@ const errorMiddleware = (
     }
   }
 
-  // Fallback: server error
+  // Fallback: internal server error
   const isDev = process.env.NODE_ENV !== "production";
   const message =
     (err && (err.message || err.toString())) || "Internal server error";
