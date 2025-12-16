@@ -37,9 +37,9 @@ class AuthController {
       const result = await this.service.loginByEmail(email, password);
 
       // Now uses centralized cookie + response logic
-      return sendSuccessWithCookie(
+      sendSuccessWithCookie(
         res,
-        "User logged in ",
+        "User logged in successfully",
         result,
         result.token,
       );
