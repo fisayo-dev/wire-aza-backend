@@ -2,12 +2,9 @@
 
 import { Response } from "express";
 import { ApiResponse } from "../types/interfaces/index.ts";
-import { FRONTEND_URL } from "../configs/env.ts";
-import { is } from "zod/locales";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-/**
- * Send a successful response
- */
 export const sendSuccess = <T>(
   res: Response,
   message: string,
@@ -16,15 +13,12 @@ export const sendSuccess = <T>(
 ): Response => {
   const response: ApiResponse<T> = {
     success: true,
-    message,
+    message,  
     ...(data !== undefined && { data }),
   };
   return res.status(statusCode).json(response);
 };
 
-/**
- * NEW: Send success + set httpOnly session cookie
- */
 export const sendSuccessWithCookie = <T>(
   res: Response,
   message: string,
@@ -40,29 +34,19 @@ export const sendSuccessWithCookie = <T>(
 
   const isProduction = process.env.NODE_ENV === "production";
 
-  // Development: use sameSite: "lax" with secure: false
-  // Production: use sameSite: "none" with secure: true for cross-origin
-  const cookieOptions = {
-    // domain: "localhost:8000",
-    httpOnly: isProduction,
+  const cookieOptions: any = {
+    httpOnly: true,
     secure: isProduction,
-    sameSite: "none" as "none",
+    sameSite: isProduction ? "none" : "lax", // lowercase "none"
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: "/",
+    path: "/", // Ensure cookie is available for all routes
+    // domain: isProduction ? process.env.FRONTEND_URL?.replace(/^https?:\/\//, '') : 'localhost',
   };
 
-  console.log("🍪 Setting cookie:", {
-    name: "wire-aza-session",
-    token: token.substring(0, 20) + "...",
-    ...cookieOptions,
-  });
-
   res.cookie("wire-aza-session", token, cookieOptions);
-
   res.status(statusCode).json(response);
 };
 
-// Keep your existing error helpers unchanged...
 export const sendError = (
   res: Response,
   message: string,

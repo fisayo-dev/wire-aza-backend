@@ -1,10 +1,33 @@
 import connectDB from "./configs/db.ts";
-import { PORT } from "./configs/env.ts";
-import { app } from "./configs/express.ts";
+import express from "express";
+import cors from "cors";
+import { PORT, FRONTEND_URL } from "./configs/env.ts";
 import { logger } from "./utils/logger.ts";
 import { sendSuccess } from "./utils/response.ts";
 import authRoute from "./routes/auth.route.ts";
 import errorMiddleware from "./middlewares/error.middleware.ts";
+
+// Create Express app and configure middleware (moved from src/configs/express.ts)
+export const app = express();
+
+const corsOptions = {
+  origin: FRONTEND_URL!,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Set-Cookie"],
+};
+
+console.log("🔐 CORS configured with origin:", FRONTEND_URL);
+
+// Allow cookies in development (trust proxy for production)
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1); // Trust first proxy in production
+}
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Base route
 app.get("/api/v1/", (_, res) => {

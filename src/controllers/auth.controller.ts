@@ -36,7 +36,13 @@ class AuthController {
       const { email, password } = req.body;
       const result = await this.service.loginByEmail(email, password);
 
-      sendSuccessWithCookie(res, "Login successful", result, result.token);
+      // Now uses centralized cookie + response logic
+      return sendSuccessWithCookie(
+        res,
+        "User logged in ",
+        result,
+        result.token,
+      );
     } catch (error: any) {
       next(error);
     }
@@ -70,7 +76,7 @@ class AuthController {
         provider as "google" | "github"
       );
 
-      return sendSuccess(res, "OAuth URL generated", { authUrl: url });
+      sendSuccess(res, "OAuth URL generated", { authUrl: url });
     } catch (error: any) {
       next(error);
     }

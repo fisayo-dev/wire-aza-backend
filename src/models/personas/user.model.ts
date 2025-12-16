@@ -20,13 +20,6 @@ const userSchema = new Schema(
       required: false,
       minLength: 6,
     },
-    username: {
-      type: String,
-      required: [false, "Username is the same"],
-      sparse: true,
-      trim: true,
-      lowercase: true,
-    },
     avatar: {
       type: String,
       required: false,

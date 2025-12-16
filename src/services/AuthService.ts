@@ -27,7 +27,6 @@ class AuthService {
         name: authCredentials.name,
         email: authCredentials.email,
         password: hashedPassword,
-        username: authCredentials.username,
         avatar: authCredentials.avatar,
       };
 
@@ -46,7 +45,6 @@ class AuthService {
           id: user._id,
           name: user.name,
           email: user.email,
-          username: user.username,
           avatar: user.avatar,
         },
         token,
@@ -71,14 +69,13 @@ class AuthService {
       }
 
       // Generate JWT token
-      const token = signToken(user._id.toString());
+      const token: string = signToken(user._id.toString());
 
       return {
         user: {
           id: user._id,
           name: user.name,
           email: user.email,
-          username: user.username,
           avatar: user.avatar,
         },
         token,
@@ -107,7 +104,6 @@ class AuthService {
           id: user._id,
           name: user.name,
           email: user.email,
-          username: user.username,
           avatar: user.avatar,
         },
         token,
@@ -264,7 +260,6 @@ class AuthService {
           id: user?._id!,
           name: user?.name!,
           email: user?.email!,
-          username: user?.username!,
           avatar: user?.avatar!,
         },
         token,
