@@ -9,7 +9,11 @@ const organizationSchema = new Schema(
     description: {
       type: String,
       required: [true, "Description of organization is required."],
-      minLength: 50,
+      minLength: 20,
+    },
+    logo: {
+      type: String,
+      required: false,
     },
     owner: {
       type: mongoose.Types.ObjectId,
