@@ -14,8 +14,7 @@ export const authMiddleware = (
 ) => {
   try {
     const token = req.cookies?.["wire-aza-session"];
-    console.log("Auth Middleware - Token from cookies:", token);
-
+    
     if (!token) {
       return sendError(res, "Authentication required", 401);
     }
