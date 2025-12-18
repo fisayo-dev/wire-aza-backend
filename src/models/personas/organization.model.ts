@@ -16,6 +16,10 @@ const organizationSchema = new Schema(
       required: [true, "Description of organization is required."],
       minLength: 20,
     },
+    type: {
+      type: String,
+      required: [true, "Type of organization is required."],
+    },
     logo: {
       type: String,
       required: false,
