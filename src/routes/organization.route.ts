@@ -28,4 +28,11 @@ router.get(
   organizationController.getAllOrganizations
 );
 
+// Get organization by ID
+router.get(
+  "/organizations/:id",
+  authMiddleware,
+  organizationController.getOrganizationById
+);
+
 export default router;

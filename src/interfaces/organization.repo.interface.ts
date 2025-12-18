@@ -3,4 +3,5 @@ export interface IOrganizationRepo {
   storeOrganizationInDB(organizationData: any): Promise<any>;
   storeOrganizationAzaInDB(azaData: any): Promise<any>;
   getAllOrganizations(): Promise<any[]>;
+  getOrganizationById(organizationId: string): Promise<any>;
 }

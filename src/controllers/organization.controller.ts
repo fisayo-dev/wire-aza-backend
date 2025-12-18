@@ -46,13 +46,18 @@ class OrganizationController {
     next: NextFunction
   ) => {
     try {
-      // Implementation for fetching organization by ID
+      const { id } = req.params;
+      if (!id) {
+        return next(new Error("Organization ID is required"));
+      }
+      const organization = await this.service.getOrganizationById(id);
+      sendSuccess(res, "Organization fetched successfully", organization);
     } catch (error: any) {
       next(error);
     }
   };
 
-  updateOrganization = async ( 
+  updateOrganization = async (
     req: Request,
     res: Response,
     next: NextFunction

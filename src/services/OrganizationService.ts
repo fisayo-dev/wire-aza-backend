@@ -77,6 +77,17 @@ class OrganizationService {
 
     return organizationsWithOwners;
   };
+
+  getOrganizationById = async (organizationId: string) => {
+    const organization = await this.organizationRepo.getOrganizationById(
+      organizationId
+    );
+    if (!organization) {
+      throw new Error("Organization not found");
+    }
+    await organization.populate("owner", "id name email");
+    return organization;
+  };
 }
 
 export default OrganizationService;
