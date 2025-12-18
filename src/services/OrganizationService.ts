@@ -31,17 +31,26 @@ class OrganizationService {
       organizationData
     );
 
-    // Create aza account
-    const azaData = {
-      account_number: organizationCredentials.account_number,
-      bank_code: organizationCredentials.bank_code,
-      bank_name: organizationCredentials.bank_name,
-      type: AzaType.naira, // Nigerian, so NGN
-      userOwner: userId,
-      organizationOwner: organization._id,
-    };
+    // Create aza accounts
+    const azas = [];
+    for (const account of organizationCredentials.accounts) {
+      const azaData = {
+        account_number: account.account_number,
+        bank_code: account.bank_code,
+        bank_name: account.bank_name,
+        type: AzaType.naira, // Nigerian, so NGN
+        userOwner: userId,
+        organizationOwner: organization._id,
+      };
 
-    const aza = await this.organizationRepo.storeOrganizationAzaInDB(azaData);
+      const aza = await this.organizationRepo.storeOrganizationAzaInDB(azaData);
+      azas.push({
+        id: aza._id,
+        account_number: aza.account_number,
+        bank_name: aza.bank_name,
+        type: aza.type,
+      });
+    }
 
     return {
       organization: {
@@ -53,12 +62,7 @@ class OrganizationService {
         logo: organization.logo,
         owner: organization.owner,
       },
-      aza: {
-        id: aza._id,
-        account_number: aza.account_number,
-        bank_name: aza.bank_name,
-        type: aza.type,
-      },
+      azas,
     };
   };
 }
