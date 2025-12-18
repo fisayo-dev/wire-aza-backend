@@ -14,7 +14,7 @@ export const authMiddleware = (
 ) => {
   try {
     const token = req.cookies?.["wire-aza-session"];
-    
+    console.log(token ? "🔐 Auth token found" : "⚠️ No auth token found");
     if (!token) {
       return sendError(res, "Authentication required", 401);
     }
