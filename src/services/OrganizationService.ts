@@ -65,6 +65,18 @@ class OrganizationService {
       azas,
     };
   };
+
+  getAllOrganizations = async () => {
+    const organizations = await this.organizationRepo.getAllOrganizations();
+    const organizationsWithOwners = await Promise.all(
+      organizations.map(async (org) => {
+        await org.populate("owner", "id name email");
+        return org;
+      })
+    );
+
+    return organizationsWithOwners;
+  };
 }
 
 export default OrganizationService;

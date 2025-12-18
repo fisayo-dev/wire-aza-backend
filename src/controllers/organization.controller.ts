@@ -26,6 +26,55 @@ class OrganizationController {
       next(error);
     }
   };
+
+  getAllOrganizations = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const organizations = await this.service.getAllOrganizations();
+      sendSuccess(res, "Organizations fetched successfully", organizations);
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  getOrganizationById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      // Implementation for fetching organization by ID
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  updateOrganization = async ( 
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      // Implementation for updating organization details
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  deleteOrganization = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      // Implementation for deleting an organization
+    } catch (error: any) {
+      next(error);
+    }
+  };
 }
 
 export default OrganizationController;

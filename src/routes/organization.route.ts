@@ -21,4 +21,11 @@ router.post(
   organizationController.createOrganization
 );
 
+// Get all organizations
+router.get(
+  "/organizations",
+  authMiddleware,
+  organizationController.getAllOrganizations
+);
+
 export default router;

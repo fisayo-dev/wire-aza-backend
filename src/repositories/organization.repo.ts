@@ -19,6 +19,16 @@ class OrganizationRepo implements IOrganizationRepo {
     await aza.save();
     return aza;
   };
+
+  getAllOrganizations = async () => {
+    const organizations = await OrganizationModel.find();
+    return organizations;
+  };
+
+  getOrganizationById = async (organizationId: string) => {
+    const organization = await OrganizationModel.findById(organizationId);
+    return organization;
+  }
 }
 
 export default OrganizationRepo;
