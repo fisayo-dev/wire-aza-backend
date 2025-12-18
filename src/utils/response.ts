@@ -5,7 +5,7 @@ import { ApiResponse } from "../types/interfaces/index.ts";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-export const sendSuccess = <T>(
+export const  sendSuccess = <T>(
   res: Response,
   message: string,
   data?: T,

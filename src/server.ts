@@ -7,6 +7,8 @@ import { sendSuccess } from "./utils/response.ts";
 import authRoute from "./routes/auth.route.ts";
 import organizationRoute from "./routes/organization.route.ts";
 import errorMiddleware from "./middlewares/error.middleware.ts";
+import cookieParser from "cookie-parser";
+
 
 // Create Express app and configure middleware (moved from src/configs/express.ts)
 export const app = express();
@@ -29,6 +31,7 @@ if (process.env.NODE_ENV === "production") {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Base route
 app.get("/api/v1/", (_, res) => {
