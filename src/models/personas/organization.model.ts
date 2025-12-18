@@ -6,6 +6,11 @@ const organizationSchema = new Schema(
       type: String,
       required: [true, "Name of organization is required."],
     },
+    username: {
+      type: String,
+      required: [true, "Username of organization is required."],
+      unique: true,
+    },
     description: {
       type: String,
       required: [true, "Description of organization is required."],
