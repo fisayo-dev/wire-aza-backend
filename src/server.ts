@@ -5,6 +5,7 @@ import { PORT, FRONTEND_URL } from "./configs/env.ts";
 import { logger } from "./utils/logger.ts";
 import { sendSuccess } from "./utils/response.ts";
 import authRoute from "./routes/auth.route.ts";
+import organizationRoute from "./routes/organization.route.ts";
 import errorMiddleware from "./middlewares/error.middleware.ts";
 
 // Create Express app and configure middleware (moved from src/configs/express.ts)
@@ -41,6 +42,9 @@ app.get("/api/v1/health", (_, res) => {
 
 // Register auth routes
 app.use("/api/v1", authRoute);
+
+// Register organization routes
+app.use("/api/v1", organizationRoute);
 
 // Register centralized error handler after all routes
 app.use(errorMiddleware);
